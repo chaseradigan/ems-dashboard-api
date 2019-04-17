@@ -1,0 +1,81 @@
+package com.hcl.queue.logreader.web;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.hcl.queue.logreader.domain.Entry;
+import com.hcl.queue.logreader.services.MainService;
+import com.hcl.queue.logreader.services.MapValidationErrorService;
+
+@RestController
+@RequestMapping("/api")
+@CrossOrigin
+public class MainController {
+	
+	@Autowired
+	public MapValidationErrorService mapValidationErrorService;
+	
+	@Autowired
+	public MainService mainService;
+	
+	//Change FILE PATHNAME in the method
+	//
+	@GetMapping("/test")
+	public ResponseEntity<?> parseTargetFile(@RequestHeader(value="path") String path){
+		//Change this pathname to match your folder that contains the folders for EMS_U1 and EMS_U2
+		String pathname="/var/prod/tibco-shared/scripts/nikhil/"+path;
+		
+		List<Entry> entries = new ArrayList<Entry>();
+		try {
+			entries = mainService.parseFileFromPath(pathname, entries);
+		} catch (IOException e) {
+			Map<String, String> responseMap = new HashMap<String, String>();
+			responseMap.put("errors", "File not found from path: " + pathname);
+			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<List<Entry>>(entries, HttpStatus.OK);
+	}
+	
+// IGNORE these methods
+//	@GetMapping("/queuelist")
+//	public ResponseEntity<?> queueList(@RequestHeader(value="path") String path){
+//		Set<String> queueSet = new HashSet<>();
+//		try {
+//			queueSet = mainService.parseFileToMap(path);
+//		} catch (IOException e) {
+//			Map<String, String> responseMap = new HashMap<String, String>();
+//			responseMap.put("errors", "File not found from path: " + path);
+//			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.BAD_REQUEST);
+//		}
+//		Map<String, Set<String>> res = new HashMap<String, Set<String>>();
+//		res.put("queues", queueSet);
+//		return new ResponseEntity<Map<String, Set<String>>>(res, HttpStatus.OK);
+//	}
+//	
+//	@GetMapping("/getqueue")
+//	public ResponseEntity<?> getQueue(@RequestHeader(value="path") String path, @RequestHeader(value="queue") String queue){
+//		List<String> list = mainService.getConsumerList(path, queue);
+//		if(list == null) {
+//			Map<String, String> responseMap = new HashMap<String, String>();
+//			responseMap.put("errors", "Queue not found from storage: " + queue);
+//			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.BAD_REQUEST);
+//		}
+//		Map<String, List<String>> res = new HashMap<String, List<String>>();
+//		res.put("consumers", list);
+//		return new ResponseEntity<Map<String, List<String>>>(res, HttpStatus.OK);
+//	}
+}
