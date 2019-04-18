@@ -44,25 +44,27 @@ public class MainService {
 	public Map<String, List<String>> getOutput(String path) throws IOException {
 		Map<String, List<String>> map = new HashMap<>();
         List<String> getList;
-
+        	System.out.println("Path Name: "+path);
             BufferedReader br = new BufferedReader(new FileReader(path));
             String line;
             while ((line = br.readLine()) != null) {
                 String[] arr = line.split("\\s+");
                 add(map, arr[0], arr[1]);
             }
-//            for (String key : map.keySet()) {
-//                getList = map.get(key);
-//                System.out.println("Queue Name: " + key);
-//                System.out.println("Consumers:");
-//                for (int i = 0; i < getList.size(); i++) {
-//                    System.out.println(getList.get(i));
-//                }
-//                System.out.println("---------");
-//            }
+            for (String key : map.keySet()) {
+                getList = map.get(key);
+                System.out.println("Read the file! Starting to parse txt");
+                System.out.println("Queue Name: " + key);
+                System.out.println("Consumers:");
+                for (int i = 0; i < getList.size(); i++) {
+                    System.out.println(getList.get(i));
+                }
+                System.out.println("---------");
+            }
             br.close();
 
         return map;
+
     }
 	
 	private void add(Map<String, List<String>> map, String key, String value) {

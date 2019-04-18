@@ -36,16 +36,30 @@ public class MainController {
 	//
 	@GetMapping("/test")
 	public ResponseEntity<?> parseTargetFile(@RequestHeader(value="path") String path){
+		
+		String osname = System.getProperty("os.name");
+		osname = osname.toLowerCase();
+		System.out.println(osname);
+		String homepath = System.getProperty("user.home");
+		System.out.println(homepath);
+		String pathname;
+		if(osname.indexOf("win")>=0) {
+
+			pathname = homepath+"\\"+path;
+		}
+		else {
 		//Change this pathname to match your folder that contains the folders for EMS_U1 and EMS_U2
-		String pathname="/var/prod/tibco-shared/scripts/nikhil/"+path;
+			pathname="/var/prod/tibco-shared/scripts/nikhil/"+path;
+		}
 		
 		List<Entry> entries = new ArrayList<Entry>();
 		try {
 			entries = mainService.parseFileFromPath(pathname, entries);
 		} catch (IOException e) {
 			Map<String, String> responseMap = new HashMap<String, String>();
-			responseMap.put("errors", "File not found from path: " + pathname);
-			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.BAD_REQUEST);
+			responseMap.put("errors", e.getMessage());
+			System.out.println(e.getMessage());
+			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.OK);
 		}
 		return new ResponseEntity<List<Entry>>(entries, HttpStatus.OK);
 	}
