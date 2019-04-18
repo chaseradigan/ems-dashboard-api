@@ -41,7 +41,7 @@ public class MainService {
 		return res;
 	}
 	
-	public Map<String, List<String>> getOutput(String path) throws IOException {
+	public Map<String, List<String>> getOutput(String path) throws IOException, ArrayIndexOutOfBoundsException {
 		Map<String, List<String>> map = new HashMap<>();
         List<String> getList;
         	System.out.println("Path Name: "+path);
@@ -49,6 +49,7 @@ public class MainService {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] arr = line.split("\\s+");
+               
                 add(map, arr[0], arr[1]);
             }
             for (String key : map.keySet()) {

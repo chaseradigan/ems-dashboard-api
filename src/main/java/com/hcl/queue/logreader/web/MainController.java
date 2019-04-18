@@ -60,6 +60,11 @@ public class MainController {
 			responseMap.put("errors", e.getMessage());
 			System.out.println(e.getMessage());
 			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.OK);
+		} catch (ArrayIndexOutOfBoundsException e) {
+			Map<String, String> responseMap = new HashMap<String, String>();
+			responseMap.put("errors", "File format for "+pathname+" is incorrect seperate queue and consumer with space");
+			System.out.println(e.getMessage());
+			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.OK);
 		}
 		return new ResponseEntity<List<Entry>>(entries, HttpStatus.OK);
 	}
