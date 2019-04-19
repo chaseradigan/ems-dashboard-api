@@ -13,17 +13,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hcl.queue.logreader.domain.Entry;
 import com.hcl.queue.logreader.services.MainService;
 import com.hcl.queue.logreader.services.MapValidationErrorService;
-
-@RestController
-@RequestMapping("/api")
 @CrossOrigin
+@RestController
+@RequestMapping("/")
 public class MainController {
 	
 	@Autowired
@@ -34,6 +35,7 @@ public class MainController {
 	
 	//Change FILE PATHNAME in the method
 	//
+	
 	@GetMapping("/test")
 	public ResponseEntity<?> parseTargetFile(@RequestHeader(value="path") String path){
 		
@@ -68,6 +70,7 @@ public class MainController {
 		}
 		return new ResponseEntity<List<Entry>>(entries, HttpStatus.OK);
 	}
+
 	
 // IGNORE these methods
 //	@GetMapping("/queuelist")
