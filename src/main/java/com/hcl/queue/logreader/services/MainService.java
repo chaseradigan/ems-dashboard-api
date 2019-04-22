@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,11 +44,11 @@ public class MainService {
 	}
 	
 	public List<String> getCompareList(String path, String queue){
-		// assume map already have the paths
+		// assume map already have the path keys
 		
 		List<String> oldConsumers = getConsumerList(path + "past.txt", queue);
 		List<String> curConsumers = getConsumerList(path + "final.txt", queue);
-		Map<String, Integer> map = new HashMap<String, Integer>();
+		Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 		for(String s : oldConsumers) {
 			map.put(s, map.getOrDefault(s, 0) + 1);
 		}
