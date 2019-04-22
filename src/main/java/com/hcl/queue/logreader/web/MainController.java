@@ -71,43 +71,55 @@ public class MainController {
 		return new ResponseEntity<List<Entry>>(entries, HttpStatus.OK);
 	}
 
+	@GetMapping("/queuelist")
+	public ResponseEntity<?> queueList(@RequestHeader(value="path") String path){
+		path = combinePath(path);
+		Set<String> queueSet = new HashSet<>();
+		try {
+			queueSet = mainService.parseFileToMap(path);
+		} catch (IOException e) {
+			Map<String, String> responseMap = new HashMap<String, String>();
+			responseMap.put("errors", e.getMessage());
+			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.OK);
+		}
+		Map<String, Set<String>> res = new HashMap<String, Set<String>>();
+		res.put("queues", queueSet);
+		return new ResponseEntity<Map<String, Set<String>>>(res, HttpStatus.OK);
+	}
 	
-// IGNORE these methods
-//	@GetMapping("/queuelist")
-//	public ResponseEntity<?> queueList(@RequestHeader(value="path") String path){
-//		Set<String> queueSet = new HashSet<>();
-//		try {
-//			queueSet = mainService.parseFileToMap(path);
-//		} catch (IOException e) {
-//			Map<String, String> responseMap = new HashMap<String, String>();
-//			responseMap.put("errors", "File not found from path: " + path);
-//			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.BAD_REQUEST);
-//		}
-//		Map<String, Set<String>> res = new HashMap<String, Set<String>>();
-//		res.put("queues", queueSet);
-//		return new ResponseEntity<Map<String, Set<String>>>(res, HttpStatus.OK);
-//	}
-//	
-//	@GetMapping("/getqueue")
-//	public ResponseEntity<?> getQueue(@RequestHeader(value="path") String path, @RequestHeader(value="queue") String queue){
-//		List<String> list = mainService.getConsumerList(path, queue);
-//		if(list == null) {
-//			Map<String, String> responseMap = new HashMap<String, String>();
-//			responseMap.put("errors", "Queue not found from storage: " + queue);
-//			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.BAD_REQUEST);
-//		}
-//		Map<String, List<String>> res = new HashMap<String, List<String>>();
-//		res.put("consumers", list);
-//		return new ResponseEntity<Map<String, List<String>>>(res, HttpStatus.OK);
-//	}
+	@GetMapping("/getqueue")
+	public ResponseEntity<?> getQueue(@RequestHeader(value="path") String path, @RequestHeader(value="queue") String queue){
+		path = combinePath(path);
+		System.out.println(path + " " + queue);
+		List<String> list = mainService.getConsumerList(path, queue);
+		if(list == null) {
+			Map<String, String> responseMap = new HashMap<String, String>();
+			responseMap.put("errors", "Please Refresh, Queue not found: " + queue);
+			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.OK);
+		}
+		Map<String, List<String>> res = new HashMap<String, List<String>>();
+		res.put("consumers", list);
+		return new ResponseEntity<Map<String, List<String>>>(res, HttpStatus.OK);
+	}
 	
 	// path is up to /EMS_U1/APP_U1_p1d0_7022/logs/
 		@GetMapping("/compare")
 		public ResponseEntity<?> compare(@RequestHeader(value = "path") String path,
 				@RequestHeader(value = "queue") String queue){
+			String pathname = combinePath(path);
+			
+			List<String> list = mainService.getCompareList(pathname, queue);
+			Map<String, List<String>> res = new HashMap<String, List<String>>();
+			res.put("changes", list);
+			return new ResponseEntity<Map<String, List<String>>>(res, HttpStatus.OK);
+		}
+		
+		private String combinePath(String path) {
 			String osname = System.getProperty("os.name");
 			osname = osname.toLowerCase();
+			System.out.println(osname);
 			String homepath = System.getProperty("user.home");
+			System.out.println(homepath);
 			String pathname;
 			if(osname.indexOf("win")>=0) {
 
@@ -117,10 +129,6 @@ public class MainController {
 			//Change this pathname to match your folder that contains the folders for EMS_U1 and EMS_U2
 				pathname="/var/prod/tibco-shared/scripts/nikhil/"+path;
 			}
-			
-			List<String> list = mainService.getCompareList(pathname, queue);
-			Map<String, List<String>> res = new HashMap<String, List<String>>();
-			res.put("changes", list);
-			return new ResponseEntity<Map<String, List<String>>>(res, HttpStatus.OK);
+			return pathname;
 		}
 }
