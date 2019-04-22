@@ -100,4 +100,27 @@ public class MainController {
 //		res.put("consumers", list);
 //		return new ResponseEntity<Map<String, List<String>>>(res, HttpStatus.OK);
 //	}
+	
+	// path is up to /EMS_U1/APP_U1_p1d0_7022/logs/
+		@GetMapping("/compare")
+		public ResponseEntity<?> compare(@RequestHeader(value = "path") String path,
+				@RequestHeader(value = "queue") String queue){
+			String osname = System.getProperty("os.name");
+			osname = osname.toLowerCase();
+			String homepath = System.getProperty("user.home");
+			String pathname;
+			if(osname.indexOf("win")>=0) {
+
+				pathname = homepath+"\\"+path;
+			}
+			else {
+			//Change this pathname to match your folder that contains the folders for EMS_U1 and EMS_U2
+				pathname="/var/prod/tibco-shared/scripts/nikhil/"+path;
+			}
+			
+			List<String> list = mainService.getCompareList(pathname, queue);
+			Map<String, List<String>> res = new HashMap<String, List<String>>();
+			res.put("changes", list);
+			return new ResponseEntity<Map<String, List<String>>>(res, HttpStatus.OK);
+		}
 }

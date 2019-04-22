@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,34 @@ public class MainService {
 		Map<String, List<String>> entryMap = globalMap.get(path);
 		if(entryMap == null || !entryMap.containsKey(queue)) return null;
 		List<String> res = entryMap.get(queue);
+		return res;
+	}
+	
+	public List<String> getCompareList(String path, String queue){
+		// assume map already have the paths
+		
+		List<String> oldConsumers = getConsumerList(path + "past.txt", queue);
+		List<String> curConsumers = getConsumerList(path + "final.txt", queue);
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		for(String s : oldConsumers) {
+			map.put(s, map.getOrDefault(s, 0) + 1);
+		}
+		
+		for(String s : curConsumers) {
+			map.put(s, map.getOrDefault(s, 0) - 1);
+		}
+		
+		List<String> res = new ArrayList<>();
+		for(Map.Entry<String, Integer> e : map.entrySet()) {
+			if(e.getValue() != 0) {
+				int count = Math.abs(e.getValue());
+				char sign = e.getValue() > 0 ? '-' : '+';
+				while(count > 0) {
+				res.add(sign + " " + e.getKey());
+				count--;
+				}
+			}
+		}
 		return res;
 	}
 	
