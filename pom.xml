@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.hcl.queue</groupId>
 	<artifactId>logreader</artifactId>
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 	<name>LogReader</name>
 	<description>Demo project for Spring Boot</description>
 

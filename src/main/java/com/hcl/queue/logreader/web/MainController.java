@@ -1,7 +1,6 @@
 package com.hcl.queue.logreader.web;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -13,13 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcl.queue.logreader.domain.Entry;
 import com.hcl.queue.logreader.services.MainService;
 import com.hcl.queue.logreader.services.MapValidationErrorService;
 
@@ -98,11 +94,10 @@ public class MainController {
 	public ResponseEntity<?> getQueue(@RequestHeader(value = "path") String path,
 			@RequestHeader(value = "queue") String queue) {
 		path = combinePath(path);
-		System.out.println(path + " " + queue);
 		List<String> list = mainService.getConsumerList(path, queue);
 		if (list == null) {
 			Map<String, String> responseMap = new HashMap<String, String>();
-			responseMap.put("errors", "Please Refresh, Queue not found in memory: " + queue);
+			responseMap.put("errors", "Queue not found in memory: " + queue);
 			return new ResponseEntity<Map<String, String>>(responseMap, HttpStatus.OK);
 		}
 		Map<String, List<String>> res = new HashMap<String, List<String>>();
@@ -125,9 +120,7 @@ public class MainController {
 	private String combinePath(String path) {
 		String osname = System.getProperty("os.name");
 		osname = osname.toLowerCase();
-		System.out.println(osname);
 		String homepath = System.getProperty("user.home");
-		System.out.println(homepath);
 		String pathname;
 		if (osname.indexOf("win") >= 0) {
 
