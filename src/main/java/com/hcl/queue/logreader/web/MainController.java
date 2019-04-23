@@ -29,6 +29,8 @@ public class MainController {
 
 	@Autowired
 	public MainService mainService;
+	
+	private final String LINUX_PATH = "/var/prod/tibco-shared/scripts/nikhil/";
 
 	// Change FILE PATHNAME in the method
 	//
@@ -128,7 +130,7 @@ public class MainController {
 		} else {
 			// Change this pathname to match your folder that contains the folders for
 			// EMS_U1 and EMS_U2
-			pathname = "/var/prod/tibco-shared/scripts/nikhil/" + path;
+			pathname = LINUX_PATH + path;
 		}
 		return pathname;
 	}
